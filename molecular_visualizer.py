@@ -13,7 +13,7 @@ results = c.record
 def molecular_visualization():
     # Get the compound by InChIKey
     results = pcp.get_compounds('MJIHNNLFOKEZEW-UHFFFAOYSA-N', 'inchikey')
-    c = pcp.Compound.from_cid(3883)
+    c = pcp.Compound.from_cid(2471)
 
     # Convert the compound to a dictionary
     compound_dict = c.to_dict(properties=['atoms', 'bonds', 'inchi', 'elements', 'molecular_formula', 'complexity', 'synonyms', 'charge', 'molecular_weight', 'canonical_smiles', 'isomeric_smiles', 'iupac_name'])
