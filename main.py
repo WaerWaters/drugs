@@ -1,5 +1,7 @@
 import pubchempy as pcp
 from rdkit import Chem
+from rdkit.Chem import Draw
+from rdkit.Chem.Draw import rdMolDraw2D
 from rdkit.Chem import rdmolops, AllChem
 import plotly.graph_objects as go
 
@@ -12,9 +14,12 @@ smiles = compound.canonical_smiles
 
 def get_molecule_properties(smiles):
     mol = Chem.MolFromSmiles(smiles)
+    smarts = Chem.MolToSmarts(mol)
+    print(smiles, smarts)
     updated_mol = Chem.AddHs(mol)
     AllChem.Compute2DCoords(updated_mol)
     sssr = rdmolops.GetSymmSSSR(updated_mol)
+    print(list(sssr[0]), list(sssr[1]))
     substructure_dict = {}
 
     # Gather atom information
@@ -104,10 +109,24 @@ def visualize_2d_molecule(atoms, bonds):
     # Show the plot
     fig.show()
     
-visualize_2d_molecule(get_molecule_properties(smiles)[0], get_molecule_properties(smiles)[1])
+#visualize_2d_molecule(get_molecule_properties(smiles)[0], get_molecule_properties(smiles)[1])
 
-    
-    
+def pattern_search():
+    smiles = 'CCCCNC1=C(C(=CC(=C1)C(=O)O)S(=O)(=O)N)OC2=CC=CC=C2'
+    smarts = '[#6]-[#6]-[#6]-[#6]-[#7]-[#6]1:[#6](:[#6](:[#6]:[#6](:[#6]:1)-[#6](=[#8])-[#8])-[#16](=[#8])(=[#8])-[#7])-[#8]-[#6]1:[#6]:[#6]:[#6]:[#6]:[#6]:1'
+    smarts_sub = '[#6]-[#6]-[#7]-[#6]-[#8]'
+
+    mol = Chem.MolFromSmiles(smiles)
+    pattern = Chem.MolFromSmiles(smarts_sub)
+    hit_ats = list(mol.GetSubstructMatch(pattern))
+    hit_bonds = []
+    for bond in pattern.GetBonds():
+        aid1 = hit_ats[bond.GetBeginAtomIdx()]
+        aid2 = hit_ats[bond.GetEndAtomIdx()]
+        hit_bonds.append(mol.GetBondBetweenAtoms(aid1, aid2).GetIdx())
+    d = Draw.rdMolDraw2D.MolDraw2DCairo(500, 500)
+
+        
     
     
     
